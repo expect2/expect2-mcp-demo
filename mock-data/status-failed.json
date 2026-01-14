@@ -1,0 +1,24 @@
+{
+  "sessionId": "sess_001",
+  "status": "failed",
+  "progress": {
+    "testsRun": 11,
+    "testsTotal": 11,
+    "currentTest": null
+  },
+  "results": {
+    "total": 11,
+    "passed": 10,
+    "failed": 1,
+    "skipped": 0,
+    "duration": 12350
+  },
+  "failures": [
+    {
+      "testName": "should persist cart items across page reload",
+      "suiteName": "cart.spec.ts",
+      "error": "Expected cart to contain 2 items, but found 0",
+      "logs": "# Test Failure Report\n\n**Suite:** cart.spec.ts  \n**Test:** should persist cart items across page reload  \n**Duration:** 3.5s  \n**Timestamp:** 2026-01-15T14:22:33Z\n\n## Console Logs\n\n| Time | Level | Message |\n|------|-------|---------|\n| 14:22:30.100 | INFO | [CartContext] Adding \"DreamCloud Memory Foam\" (Queen) to cart |\n| 14:22:30.150 | INFO | [CartContext] Adding \"CloudRest Hybrid\" (King) to cart |\n| 14:22:30.200 | INFO | [CartContext] Saving cart to localStorage: dreamrest-cart |\n| 14:22:30.250 | INFO | [CartContext] Cart saved: 2 items |\n| 14:22:31.000 | INFO | --- Page reload triggered --- |\n| 14:22:31.100 | INFO | [WishlistContext] Initializing wishlist storage |\n| 14:22:31.150 | WARN | [WishlistContext] Key 'dreamrest-cart' exists, clearing for wishlist |\n| 14:22:31.200 | INFO | [WishlistContext] Set dreamrest-cart = [] |\n| 14:22:31.300 | INFO | [CartContext] Loading cart from localStorage: dreamrest-cart |\n| 14:22:31.350 | WARN | [CartContext] Loaded 0 items (storage was empty or corrupted) |\n| 14:22:33.500 | ERROR | AssertionError: Expected cart.items.length to be 2, got 0 |\n\n## Network Logs\n\n| Time | Method | URL | Status | Duration |\n|------|--------|-----|--------|----------|\n| 14:22:30.100 | GET | /api/products | 200 | 45ms |\n| 14:22:31.000 | GET | / | 200 | 120ms |\n| 14:22:31.100 | GET | /api/products | 200 | 38ms |\n\n## Error Details\n\n```\nAssertionError: Expected cart.items.length to be 2, got 0\n    at Object.<anonymous> (cart.spec.ts:47:23)\n    at Context.<anonymous> (node_modules/playwright/lib/test.js:89:7)\n```\n\n## localStorage State\n\n**Before reload:**\n```json\n{\n  \"dreamrest-cart\": [{\"id\": \"dreamcloud-memory\", \"size\": \"Queen\"}, {\"id\": \"cloudrest-hybrid\", \"size\": \"King\"}]\n}\n```\n\n**After reload:**\n```json\n{\n  \"dreamrest-cart\": []\n}\n```"
+    }
+  ]
+}

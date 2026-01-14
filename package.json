@@ -1,0 +1,27 @@
+{
+  "name": "expect2-mcp",
+  "version": "0.1.0",
+  "description": "E2E test verification MCP server for coding agents",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "expect2-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node --loader ts-node/esm src/index.ts",
+    "http": "node --loader ts-node/esm src/http-server.ts",
+    "inspector": "npx @modelcontextprotocol/inspector node --loader ts-node/esm src/index.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "express": "^4.21.0",
+    "zod": "^3.24.0"
+  }
+}

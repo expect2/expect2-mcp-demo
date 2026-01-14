@@ -1,0 +1,69 @@
+{
+  "phases": [
+    {
+      "name": "scanning",
+      "icon": "📁",
+      "title": "Scanning changed files",
+      "steps": [
+        { "file": "src/contexts/WishlistContext.tsx", "result": "New React context with localStorage", "duration": 1000 },
+        { "file": "src/components/WishlistButton.tsx", "result": "Heart toggle component", "duration": 800 },
+        { "file": "src/components/ProductCard.tsx", "result": "Modified - added wishlist button", "duration": 900 },
+        { "file": "src/app/favorites/page.tsx", "result": "New favorites page", "duration": 800 },
+        { "file": "src/components/Header.tsx", "result": "Modified - added wishlist count", "duration": 700 }
+      ]
+    },
+    {
+      "name": "dependencies",
+      "icon": "🔗",
+      "title": "Analyzing dependencies",
+      "steps": [
+        { "message": "WishlistContext.tsx uses: localStorage, React context", "duration": 1000 },
+        { "message": "Found similar pattern in: CartContext.tsx", "duration": 1200 },
+        { "message": "Both contexts use localStorage for persistence", "duration": 1100 }
+      ]
+    },
+    {
+      "name": "impact",
+      "icon": "⚡",
+      "title": "Detecting change impact",
+      "steps": [
+        { "type": "added", "target": "WishlistContext with localStorage persistence", "duration": 800 },
+        { "type": "modified", "target": "ProductCard - added WishlistButton", "duration": 700 },
+        { "type": "modified", "target": "Header - wishlist count badge", "duration": 700 },
+        { "type": "affected", "target": "CartContext - shares localStorage pattern", "duration": 1000 }
+      ]
+    },
+    {
+      "name": "selection",
+      "icon": "🎯",
+      "title": "Selecting relevant tests",
+      "steps": [
+        { "suite": "wishlist.spec.ts", "count": 5, "reason": "New wishlist functionality needs coverage", "duration": 1200 },
+        { "suite": "cart.spec.ts", "count": 6, "reason": "Shared localStorage pattern - check for conflicts", "duration": 1100 }
+      ]
+    },
+    {
+      "name": "modification",
+      "icon": "🔧",
+      "title": "Modifying existing tests",
+      "steps": [
+        { "suite": "cart.spec.ts", "test": "should persist cart items across page reload", "modification": "Added localStorage isolation check", "duration": 1400 }
+      ]
+    },
+    {
+      "name": "generation",
+      "icon": "✨",
+      "title": "Generating new tests",
+      "steps": [
+        { "suite": "wishlist.spec.ts", "test": "should add product to wishlist", "reason": "Core wishlist functionality", "duration": 1300 },
+        { "suite": "wishlist.spec.ts", "test": "should persist wishlist across page reload", "reason": "localStorage persistence verification", "duration": 1200 }
+      ]
+    },
+    {
+      "name": "ready",
+      "icon": "✅",
+      "title": "Analysis complete",
+      "steps": []
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "phases": [
+    {
+      "name": "changes",
+      "icon": "📂",
+      "title": "Analyzing changes",
+      "steps": [
+        { "message": "Scanning modified files", "result": "5 files changed", "duration": 1200 },
+        { "message": "Identifying affected components", "result": "WishlistContext, CartContext", "duration": 1400 },
+        { "message": "Mapping test coverage", "result": "cart.spec.ts linked to failure", "duration": 1100 }
+      ]
+    },
+    {
+      "name": "logs",
+      "icon": "📋",
+      "title": "Collecting logs",
+      "steps": [
+        { "message": "Parsing console output", "result": "2 warnings, 1 error found", "duration": 1400 },
+        { "message": "Analyzing localStorage operations", "result": "Key collision detected", "duration": 1600 }
+      ]
+    },
+    {
+      "name": "stacktrace",
+      "icon": "🔍",
+      "title": "Analyzing execution flow",
+      "steps": [
+        { "message": "Tracing context initialization order", "result": "WishlistContext loads before CartContext", "duration": 1800 },
+        { "message": "Identifying storage key usage", "result": "Both use 'dreamrest-cart' key", "duration": 1500 }
+      ]
+    },
+    {
+      "name": "patterns",
+      "icon": "🧩",
+      "title": "Checking error patterns",
+      "steps": [
+        { "message": "Matching known failure patterns", "result": "localStorage key collision", "duration": 2000 },
+        { "message": "Checking related contexts", "result": "WishlistContext.tsx:8 - wrong key", "duration": 1700 }
+      ]
+    },
+    {
+      "name": "fix",
+      "icon": "💡",
+      "title": "Generating fix suggestion",
+      "steps": [
+        { "message": "Analyzing storage key constants", "result": "STORAGE_KEY needs unique value", "duration": 1600 },
+        { "message": "Generating code fix", "result": "Change to 'dreamrest-wishlist'", "duration": 1400 }
+      ]
+    },
+    {
+      "name": "complete",
+      "icon": "✅",
+      "title": "Analysis complete",
+      "steps": []
+    }
+  ]
+}

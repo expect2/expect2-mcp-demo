@@ -1,0 +1,13 @@
+{
+  "testName": "should persist cart items across page reload",
+  "suiteName": "cart.spec.ts",
+  "failureType": "state_corruption",
+  "rootCause": "WishlistContext uses the same localStorage key ('dreamrest-cart') as CartContext. On page load, WishlistContext initializes first and overwrites the cart data with an empty array.",
+  "suggestedFix": "Change the localStorage key in WishlistContext from 'dreamrest-cart' to 'dreamrest-wishlist' to prevent the collision.\n\n```typescript\n// src/contexts/WishlistContext.tsx\n\n// Before (bug):\nconst STORAGE_KEY = 'dreamrest-cart';\n\n// After (fix):\nconst STORAGE_KEY = 'dreamrest-wishlist';\n```",
+  "relatedFiles": [
+    "src/contexts/WishlistContext.tsx",
+    "src/contexts/CartContext.tsx"
+  ],
+  "confidence": "high",
+  "logs": "# Failure Analysis: should persist cart items across page reload\n\n**Suite:** cart.spec.ts  \n**Type:** State Corruption  \n**Confidence:** High  \n**Timestamp:** 2026-01-15T14:22:33Z\n\n## Root Cause Analysis\n\nThe cart persistence test fails because the new WishlistContext component accidentally uses the same localStorage key as CartContext.\n\n### Execution Timeline\n\n1. **14:22:30.200** - CartContext saves 2 items to `dreamrest-cart`\n2. **14:22:31.000** - Page reload triggered\n3. **14:22:31.100** - WishlistContext initializes **before** CartContext\n4. **14:22:31.150** - WishlistContext finds existing key, clears it\n5. **14:22:31.200** - WishlistContext writes `[]` to `dreamrest-cart`\n6. **14:22:31.300** - CartContext loads from `dreamrest-cart` → finds empty array\n7. **14:22:33.500** - Test assertion fails: expected 2 items, got 0\n\n### Code Location\n\n**src/contexts/WishlistContext.tsx:8**\n```typescript\nconst STORAGE_KEY = 'dreamrest-cart';  // BUG: Wrong key!\n```\n\n**src/contexts/CartContext.tsx:8**\n```typescript\nconst STORAGE_KEY = 'dreamrest-cart';  // Correct key for cart\n```\n\n## Similar Patterns Found\n\n| Pattern | Occurrences | Risk |\n|---------|-------------|------|\n| localStorage key collision | 2 contexts | HIGH |\n| Race condition on init | Possible | MEDIUM |\n\n## Recommended Fix\n\nChange WishlistContext storage key to use a unique identifier:\n\n```typescript\n// src/contexts/WishlistContext.tsx\nconst STORAGE_KEY = 'dreamrest-wishlist';  // Use unique key\n```"
+}
