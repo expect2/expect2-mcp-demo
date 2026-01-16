@@ -119,7 +119,7 @@ export function createServer(sessionState: SessionState = { sessionId: null }): 
       };
 
       // Phase 1: Detailed analysis
-      const analysisSequence = getAnalysisSequence();
+      const analysisSequence = getAnalysisSequence(isFirstCall);
 
       for (const phase of analysisSequence.phases) {
         // Log phase header

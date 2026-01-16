@@ -111,6 +111,7 @@ let failureAnalysisSequenceCache: FailureAnalysisSequence | null = null;
 let verifyResponsePassedCache: VerifyChangesOutput | null = null;
 let statusPassedCache: GetStatusOutput | null = null;
 let testSequencePassedCache: TestSequence | null = null;
+let analysisSequencePassedCache: AnalysisSequence | null = null;
 
 function loadJson<T>(filename: string): T {
   const filepath = join(MOCK_DATA_DIR, filename);
@@ -184,12 +185,20 @@ export function getTestSequence(isFirstCall: boolean = true): TestSequence {
 
 /**
  * Returns the analysis sequence for detailed progress
+ * @param isFirstCall - If true, returns sequence with test modification/generation; if false, skips those phases
  */
-export function getAnalysisSequence(): AnalysisSequence {
-  if (!analysisSequenceCache) {
-    analysisSequenceCache = loadJson<AnalysisSequence>("analysis-sequence.json");
+export function getAnalysisSequence(isFirstCall: boolean = true): AnalysisSequence {
+  if (isFirstCall) {
+    if (!analysisSequenceCache) {
+      analysisSequenceCache = loadJson<AnalysisSequence>("analysis-sequence.json");
+    }
+    return analysisSequenceCache;
+  } else {
+    if (!analysisSequencePassedCache) {
+      analysisSequencePassedCache = loadJson<AnalysisSequence>("analysis-sequence-passed.json");
+    }
+    return analysisSequencePassedCache;
   }
-  return analysisSequenceCache;
 }
 
 /**
