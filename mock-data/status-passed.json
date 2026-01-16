@@ -1,0 +1,17 @@
+{
+  "sessionId": "sess_001",
+  "status": "passed",
+  "progress": {
+    "testsRun": 11,
+    "testsTotal": 11,
+    "currentTest": null
+  },
+  "results": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "duration": 10900
+  },
+  "failures": []
+}

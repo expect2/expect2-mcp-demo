@@ -11,6 +11,8 @@ import {
   getTestSequence,
   getAnalysisSequence,
   getFailureAnalysisSequence,
+  incrementVerifyCallCount,
+  getVerifyCallCount,
   type AnalysisStep,
 } from "./mock/mock-data.js";
 import { log, spinner } from "./logger.js";
@@ -61,7 +63,11 @@ function formatAnalysisStep(
   }
 }
 
-export function createServer(): McpServer {
+export interface SessionState {
+  sessionId: string | null;
+}
+
+export function createServer(sessionState: SessionState = { sessionId: null }): McpServer {
   const server = new McpServer({
     name: "expect2",
     version: "0.1.0",
@@ -81,8 +87,15 @@ export function createServer(): McpServer {
       log.toolCall("verify_changes", args as Record<string, unknown>);
       log.divider();
 
-      const mockResponse = getVerifyChangesResponse();
-      const testSequence = getTestSequence();
+      // Track verify call count per session to determine first vs subsequent calls
+      const currentSessionId = sessionState.sessionId ?? "default";
+      const callNumber = incrementVerifyCallCount(currentSessionId);
+      const isFirstCall = callNumber === 1;
+
+      log.info(`Session ${currentSessionId}: verify_changes call #${callNumber} (${isFirstCall ? "first" : "subsequent"})`);
+
+      const mockResponse = getVerifyChangesResponse(isFirstCall);
+      const testSequence = getTestSequence(isFirstCall);
       const total = testSequence.tests.length;
 
       // Helper to send MCP progress notifications (does not log - logging is handled separately)
@@ -182,7 +195,12 @@ export function createServer(): McpServer {
     async (args) => {
       log.toolCall("get_verification_status", args as Record<string, unknown>);
 
-      const response = getStatusResponse();
+      // Use session state to determine which response to return
+      const currentSessionId = sessionState.sessionId ?? "default";
+      const callCount = getVerifyCallCount(currentSessionId);
+      const isFirstCall = callCount <= 1;
+
+      const response = getStatusResponse(isFirstCall);
       const failureCount = response.failures?.length ?? 0;
 
       // Log each failure with pretty markdown

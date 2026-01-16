@@ -2,7 +2,8 @@
 import express from "express";
 import { randomUUID } from "node:crypto";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { createServer } from "./server.js";
+import { createServer, type SessionState } from "./server.js";
+import { clearSessionState } from "./mock/mock-data.js";
 import { log, setHttpMode } from "./logger.js";
 
 // Enable HTTP mode for animated progress
@@ -13,8 +14,12 @@ app.use(express.json());
 
 const PORT = 3000;
 
-// Store transports by session ID
+// Store transports and session states by session ID
 const transports = new Map<string, StreamableHTTPServerTransport>();
+const sessionStates = new Map<string, SessionState>();
+
+// Temporary storage for pending session states (before session ID is known)
+const pendingSessionStates = new Map<StreamableHTTPServerTransport, SessionState>();
 
 app.all("/mcp", async (req, res) => {
   try {
@@ -32,7 +37,11 @@ app.all("/mcp", async (req, res) => {
         enableJsonResponse: false,
       });
 
-      const server = createServer();
+      // Create session state object that will be updated with sessionId later
+      const sessionState: SessionState = { sessionId: null };
+      pendingSessionStates.set(transport, sessionState);
+
+      const server = createServer(sessionState);
       await server.connect(transport);
 
       // Store transport when session is initialized
@@ -40,8 +49,11 @@ app.all("/mcp", async (req, res) => {
         const sid = (transport as any).sessionId;
         if (sid) {
           transports.delete(sid);
+          sessionStates.delete(sid);
+          clearSessionState(sid);  // Clean up call count tracking
           log.session("closed", sid);
         }
+        pendingSessionStates.delete(transport);
       };
     }
 
@@ -52,6 +64,15 @@ app.all("/mcp", async (req, res) => {
     const newSessionId = (transport as any).sessionId;
     if (newSessionId && !transports.has(newSessionId)) {
       transports.set(newSessionId, transport);
+
+      // Update the session state that was passed to createServer
+      const pendingState = pendingSessionStates.get(transport);
+      if (pendingState) {
+        pendingState.sessionId = newSessionId;
+        sessionStates.set(newSessionId, pendingState);
+        pendingSessionStates.delete(transport);
+      }
+
       log.session("new", newSessionId);
     }
   } catch (error) {

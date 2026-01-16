@@ -72,13 +72,45 @@ export interface FailureAnalysisSequence {
   phases: FailureAnalysisPhase[];
 }
 
-// Cache for loaded mock data
-let verifyResponseCache: VerifyChangesOutput | null = null;
+// Session state tracking for first-call vs subsequent-call behavior
+const sessionVerifyCallCounts = new Map<string, number>();
+
+/**
+ * Increment and return the verify call count for a session
+ */
+export function incrementVerifyCallCount(sessionId: string): number {
+  const current = sessionVerifyCallCounts.get(sessionId) ?? 0;
+  const newCount = current + 1;
+  sessionVerifyCallCounts.set(sessionId, newCount);
+  return newCount;
+}
+
+/**
+ * Get the current verify call count for a session (without incrementing)
+ */
+export function getVerifyCallCount(sessionId: string): number {
+  return sessionVerifyCallCounts.get(sessionId) ?? 0;
+}
+
+/**
+ * Clear session state (call when session closes)
+ */
+export function clearSessionState(sessionId: string): void {
+  sessionVerifyCallCounts.delete(sessionId);
+}
+
+// Cache for loaded mock data (failed scenario - first call)
+let verifyResponseFailedCache: VerifyChangesOutput | null = null;
 let statusFailedCache: GetStatusOutput | null = null;
 let failureAnalysisCache: AnalyzeFailureOutput | null = null;
-let testSequenceCache: TestSequence | null = null;
+let testSequenceFailedCache: TestSequence | null = null;
 let analysisSequenceCache: AnalysisSequence | null = null;
 let failureAnalysisSequenceCache: FailureAnalysisSequence | null = null;
+
+// Cache for loaded mock data (passed scenario - subsequent calls)
+let verifyResponsePassedCache: VerifyChangesOutput | null = null;
+let statusPassedCache: GetStatusOutput | null = null;
+let testSequencePassedCache: TestSequence | null = null;
 
 function loadJson<T>(filename: string): T {
   const filepath = join(MOCK_DATA_DIR, filename);
@@ -88,22 +120,38 @@ function loadJson<T>(filename: string): T {
 
 /**
  * Returns the mock response for verify_changes tool
+ * @param isFirstCall - If true, returns failed response; if false, returns passed response
  */
-export function getVerifyChangesResponse(): VerifyChangesOutput {
-  if (!verifyResponseCache) {
-    verifyResponseCache = loadJson<VerifyChangesOutput>("verify-response.json");
+export function getVerifyChangesResponse(isFirstCall: boolean = true): VerifyChangesOutput {
+  if (isFirstCall) {
+    if (!verifyResponseFailedCache) {
+      verifyResponseFailedCache = loadJson<VerifyChangesOutput>("verify-response.json");
+    }
+    return verifyResponseFailedCache;
+  } else {
+    if (!verifyResponsePassedCache) {
+      verifyResponsePassedCache = loadJson<VerifyChangesOutput>("verify-response-passed.json");
+    }
+    return verifyResponsePassedCache;
   }
-  return verifyResponseCache;
 }
 
 /**
  * Returns the mock response for get_verification_status tool
+ * @param isFirstCall - If true, returns failed response; if false, returns passed response
  */
-export function getStatusResponse(): GetStatusOutput {
-  if (!statusFailedCache) {
-    statusFailedCache = loadJson<GetStatusOutput>("status-failed.json");
+export function getStatusResponse(isFirstCall: boolean = true): GetStatusOutput {
+  if (isFirstCall) {
+    if (!statusFailedCache) {
+      statusFailedCache = loadJson<GetStatusOutput>("status-failed.json");
+    }
+    return statusFailedCache;
+  } else {
+    if (!statusPassedCache) {
+      statusPassedCache = loadJson<GetStatusOutput>("status-passed.json");
+    }
+    return statusPassedCache;
   }
-  return statusFailedCache;
 }
 
 /**
@@ -118,12 +166,20 @@ export function getFailureAnalysisResponse(): AnalyzeFailureOutput {
 
 /**
  * Returns the test sequence for streaming progress
+ * @param isFirstCall - If true, returns failed sequence; if false, returns passed sequence
  */
-export function getTestSequence(): TestSequence {
-  if (!testSequenceCache) {
-    testSequenceCache = loadJson<TestSequence>("test-sequence.json");
+export function getTestSequence(isFirstCall: boolean = true): TestSequence {
+  if (isFirstCall) {
+    if (!testSequenceFailedCache) {
+      testSequenceFailedCache = loadJson<TestSequence>("test-sequence.json");
+    }
+    return testSequenceFailedCache;
+  } else {
+    if (!testSequencePassedCache) {
+      testSequencePassedCache = loadJson<TestSequence>("test-sequence-passed.json");
+    }
+    return testSequencePassedCache;
   }
-  return testSequenceCache;
 }
 
 /**

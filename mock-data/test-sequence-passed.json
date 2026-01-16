@@ -1,0 +1,15 @@
+{
+  "tests": [
+    { "name": "should add product to wishlist", "suite": "wishlist.spec.ts", "result": "passed", "duration": 2400 },
+    { "name": "should remove product from wishlist", "suite": "wishlist.spec.ts", "result": "passed", "duration": 1600 },
+    { "name": "should display wishlist count in header", "suite": "wishlist.spec.ts", "result": "passed", "duration": 1900 },
+    { "name": "should persist wishlist across page reload", "suite": "wishlist.spec.ts", "result": "passed", "duration": 2800 },
+    { "name": "should show empty state when no favorites", "suite": "wishlist.spec.ts", "result": "passed", "duration": 1200 },
+    { "name": "should add item to cart", "suite": "cart.spec.ts", "result": "passed", "duration": 1800 },
+    { "name": "should update quantity", "suite": "cart.spec.ts", "result": "passed", "duration": 1400 },
+    { "name": "should remove item from cart", "suite": "cart.spec.ts", "result": "passed", "duration": 1300 },
+    { "name": "should calculate subtotal correctly", "suite": "cart.spec.ts", "result": "passed", "duration": 1100 },
+    { "name": "should persist cart items across page reload", "suite": "cart.spec.ts", "result": "passed", "duration": 2200 },
+    { "name": "should clear cart after checkout", "suite": "cart.spec.ts", "result": "passed", "duration": 2200 }
+  ]
+}
